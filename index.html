@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Torch PWA</title>
+    <title>تطبيق المصباح البسيط PWA</title>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icon.png">
     <script src="https://cdn.jsdelivr.net/npm/pwa-helper@1.0.0/pwa-helper.min.js"></script> <!-- PWA Helper -->
 </head>
 <body>
-    <h1>Simple Torch PWA</h1>
-    <button id="torchButton">Turn On Torch</button>
+    <h1>تطبيق المصباح البسيط PWA</h1>
+    <button id="torchButton">تشغيل المصباح</button>
 
     <script>
         let torchStatus = false;
         const torchButton = document.getElementById('torchButton');
 
-        // Check if flashlight is supported
+        // تحقق من دعم الفلاش
         if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
             navigator.mediaDevices.enumerateDevices().then(devices => {
                 const flashlight = devices.find(device => device.kind === 'videoinput');
@@ -43,9 +43,9 @@
                         track.applyConstraints({ advanced: [{ torch: true }] });
                     }
                     torchStatus = true;
-                    torchButton.textContent = "Turn Off Torch";
+                    torchButton.textContent = "إيقاف المصباح";
                 }).catch(error => {
-                    alert("Error accessing camera.");
+                    alert("حدث خطأ في الوصول إلى الكاميرا.");
                 });
         }
 
@@ -58,7 +58,7 @@
                             const track = stream.getVideoTracks()[0];
                             track.applyConstraints({ advanced: [{ torch: false }] });
                             torchStatus = false;
-                            torchButton.textContent = "Turn On Torch";
+                            torchButton.textContent = "تشغيل المصباح";
                         });
                 }
             });
