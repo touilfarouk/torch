@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Torch PWA</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon.png">
+    <script src="https://cdn.jsdelivr.net/npm/pwa-helper@1.0.0/pwa-helper.min.js"></script> <!-- PWA Helper -->
+</head>
+<body>
+    <h1>Simple Torch PWA</h1>
+    <button id="torchButton">Turn On Torch</button>
+
+    <script>
+        let torchStatus = false;
+        const torchButton = document.getElementById('torchButton');
+
+        // Check if flashlight is supported
+        if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+            navigator.mediaDevices.enumerateDevices().then(devices => {
+                const flashlight = devices.find(device => device.kind === 'videoinput');
+                if (flashlight) {
+                    torchButton.disabled = false;
+                }
+            });
+        }
+
+        torchButton.addEventListener('click', function() {
+            if (torchStatus) {
+                turnOffTorch();
+            } else {
+                turnOnTorch();
+            }
+        });
+
+        function turnOnTorch() {
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+                .then(stream => {
+                    const track = stream.getVideoTracks()[0];
+                    const capabilities = track.getCapabilities();
+                    if (capabilities.torch) {
+                        track.applyConstraints({ advanced: [{ torch: true }] });
+                    }
+                    torchStatus = true;
+                    torchButton.textContent = "Turn Off Torch";
+                }).catch(error => {
+                    alert("Error accessing camera.");
+                });
+        }
+
+        function turnOffTorch() {
+            navigator.mediaDevices.enumerateDevices().then(devices => {
+                const flashlight = devices.find(device => device.kind === 'videoinput');
+                if (flashlight) {
+                    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+                        .then(stream => {
+                            const track = stream.getVideoTracks()[0];
+                            track.applyConstraints({ advanced: [{ torch: false }] });
+                            torchStatus = false;
+                            torchButton.textContent = "Turn On Torch";
+                        });
+                }
+            });
+        }
+    </script>
+</body>
+</html>
